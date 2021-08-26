@@ -1,0 +1,89 @@
+body {
+	color: #000;
+	font-size: 24px;
+	font-family: monospace;
+}
+.container{
+	border: 1px solid black;
+	width: 800px;
+	margin: 0 auto;
+}
+
+ul {
+	list-style: none;
+}
+
+li:not([data-type]) {
+	cursor: pointer;
+}
+
+li[data-type] {
+	cursor: default;
+}
+
+li li {
+	display: none;
+}
+
+li.open > ul > li {
+	display: list-item;
+}
+.folder {
+	position: relative;
+}
+.folder::before {
+	content: "+\1F4C1";
+	position: absolute;
+	font-size: 20px;
+	font-weight: bold;
+	color: green;
+	width: 1em;
+	margin-left: -2em;
+}
+.file::before{
+	content: "\1F4C1";
+	position: absolute;
+	font-size: 20px;
+	font-weight: bold;
+	color: #000;
+	width: 1em;
+	margin-left: -2em;
+}
+li.open:not([data-type])::before {
+	content: "-\1F4C1";
+	color: red;
+	white-space: nowrap;
+
+}
+.modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: none;
+	z-index: 22;
+	background-color: rgba(110, 109, 109, 0.493);
+}
+
+.modal__content{
+	background-color: #fff;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid black;
+	width: 200px;
+	text-align: center;
+	position: relative;
+	color: aqua;
+}
+.close{
+	position: absolute;
+	top: 0;
+	right: 10px;
+	font-size: 25px;
+	font-weight: bold;
+	color: #000;
+}
+.block{
+	display: block;
+}
