@@ -2,6 +2,7 @@ const json =
 	[{
 		"type": "folder",
 		"name": "app",
+		"main": 1,
 		"children": [
 			{
 				"type": "folder",
@@ -11,11 +12,6 @@ const json =
 						"type": "file",
 						"name": "lib",
 						"index": 1,
-					},
-					{
-						"type": "file",
-						"name": "about.css",
-						"index": 2,
 					}
 				]
 			},
@@ -25,7 +21,7 @@ const json =
 				"children": [{
 					"type": "file",
 					"name": "cat",
-					"index": 3,
+					"index": 2,
 				}]
 			},
 			{
@@ -39,7 +35,7 @@ const json =
 							{
 								"type": "file",
 								"name": "language.en.js",
-								"index": 4,
+								"index": 3,
 							}
 						]
 					},
@@ -50,14 +46,14 @@ const json =
 							{
 								"type": "file",
 								"name": "brain.js",
-								"index": 5,
+								"index": 4,
 							}
 						]
 					},
 					{
 						"type": "file",
 						"name": "about.js",
-						"index": 6,
+						"index": 5,
 					}
 				]
 			},
@@ -68,7 +64,7 @@ const json =
 					{
 						"type": "file",
 						"name": "about.html",
-						"index": 7,
+						"index": 6,
 					}
 				]
 			},
@@ -79,46 +75,105 @@ const json =
 					{
 						"type": "file",
 						"name": "style.css",
-						"index": 8,
+						"index": 7,
 					}
 				]
 			}
 		]
-	}]
+	}];
+
 
 const container = document.querySelector('.container');
-function get_html_tree(json) {
-	let html = '<ul>'
+
+function printRecursion(json) {
+
+	let root = '<ul >';
+
 	for (const obj of json) {
-		const { type, name, children ,index} = obj
-		if (type == 'file')
-			html += `<li class="file" onclick=openModal(${index}) data-type>${name}</li>
-			<div class="modal" id="myModel${index}">
+
+		const { type, name, children, index, main } = obj;
+		if (type === 'file') {
+			root += `<li class='file'  data-click="click" id="${index}"onclick=openModal(${index})  data-type="file"  tabindex=0>${name} </li>
+			<div class="modal" id="a${index}" >
 			<div class="modal__content" >
 			<span class="close" onclick=closeModal(${index})>X</span>
 			<p>${name}</p>
 			</div>
-			</div>
-		 `
-		else {
-			html += ` <li class = "folder">${name} `
-			if (children) html += `${get_html_tree(children)}</li>`
+			</div>`;
 		}
+
+		else {
+			root += `<li class = "folder " data-click="click" tabindex=0>${name}`;
+			if (children) root += `${printRecursion(children)}</li>`;
+		}
+
 	}
 
-	return `${html}</ul>`
+	return `${root}</ul>`;
+
+}
+container.innerHTML = printRecursion(json);
+
+function hideShow(el) {
+	el.classList.toggle('open');
+}
+
+function innerElements(el) {
+	el.nextElementSibling;
 }
 
 function openModal(index) {
-	const modal = document.getElementById(`myModel${index}`);
+	const modal = document.getElementById(`a${index}`);
 	modal.classList.add('block');
 }
 function closeModal(index) {
-	const modal = document.getElementById(`myModel${index}`);
+	const modal = document.getElementById(`a${index}`);
 	modal.classList.remove('block');
 }
 
-container.innerHTML = get_html_tree(json);
-document.querySelector('li').onclick = e => e.target.classList.toggle('open');
+function events() {
+	const list = document.querySelector('li');
+	let firstEl = document.querySelector('li:first-child');
 
+	list.onclick = e => hideShow(e.target);
 
+	firstEl.focus();
+
+	window.addEventListener('keydown', (event) => {
+
+		let a = document.querySelectorAll('li');
+
+		if (event.key === 'ArrowDown') {
+
+			function dos(el) {
+				el = event.target.nextElementSibling;
+				if (event.target.firstElementChild.firstElementChild) {
+					let inner = event.target.firstElementChild.firstElementChild;
+					inner.focus()
+				}
+				el = event.target.nextElementSibling;
+				if (!(event.target.nextElementSibling)) el = event.target.parentNode.parentNode;
+				if (event.target.children && event.target.classList.contains('open')) dos(el.firstChild)
+				return el.focus();
+			}
+			dos(event.target);
+		}
+
+		if (event.key === 'Enter') {
+			if (event.target.classList.contains('file')) {
+				
+				const modal = document.getElementById(`a${event.target.id}`);
+				modal.classList.toggle('block');
+			
+			} else
+				hideShow(event.target);
+		}
+
+		if (event.key === 'ArrowUp') {
+			let prev = event.target.previousElementSibling;
+			if (!(event.target.previousElementSibling)) prev =  event.target.parentNode.parentNode;
+			prev.focus();
+		}
+	});
+}gi
+events();
